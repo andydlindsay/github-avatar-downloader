@@ -5,8 +5,6 @@ const mkdirp = require('mkdirp');
 const secrets = require('./secrets');
 const log = console.log;
 
-log('Welcome to the GitHub Avatar Downloader!');
-
 function getRepoContributors(repoOwner, repoName, cb) {
   const options = {
     url: `https://api.github.com/repos/${repoOwner}/${repoName}/contributors`,
@@ -31,17 +29,22 @@ function downloadImageByURL(url, filePath) {
 const repoOwner = process.argv[2];
 const repoName = process.argv[3];
 
-getRepoContributors(repoOwner, repoName, (err, result) => {
-  log("Errors:", err);
-  var mkdirp = require('mkdirp');
-  mkdirp('avatars', function(err) {
-    if (err) {
-      console.error(err);
-      return;
-    }
-    result.forEach((contributor) => {
-      downloadImageByURL(contributor.avatar_url, contributor.login);
+if (repoOwner && repoName) {
+  log('Welcome to the GitHub Avatar Downloader!');
+  getRepoContributors(repoOwner, repoName, (err, result) => {
+    log("Errors:", err);
+    var mkdirp = require('mkdirp');
+    mkdirp('avatars', function(err) {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      result.forEach((contributor) => {
+        downloadImageByURL(contributor.avatar_url, contributor.login);
+      });
+      log('Result: Download Complete');
     });
-    log('Result: Download Complete');
   });
-});
+} else {
+  log('USAGE: node download_avatars.js <repoOwner> <repoName>');
+}

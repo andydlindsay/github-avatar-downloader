@@ -1,8 +1,9 @@
+require('dotenv').config();
+
 const request = require('request');
 const https = require('https');
 const fs = require('fs');
 const mkdirp = require('mkdirp');
-const secrets = require('./secrets');
 const log = console.log;
 
 function getRepoContributors(repoOwner, repoName, cb) {
@@ -12,7 +13,7 @@ function getRepoContributors(repoOwner, repoName, cb) {
       'User-Agent': 'request'
     },
     qs: {
-      access_token: secrets.GITHUB_TOKEN
+      access_token: process.env.GITHUB_TOKEN
     }
   };
   request(options, (err, res, body) => {

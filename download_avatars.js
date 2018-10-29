@@ -1,5 +1,6 @@
 const request = require('request');
 const https = require('https');
+const fs = require('fs');
 const secrets = require('./secrets');
 const log = console.log;
 
@@ -17,6 +18,17 @@ function getRepoContributors(repoOwner, repoName, cb) {
     cb(err, JSON.parse(body));
   });
 }
+
+function downloadImageByURL(url, filePath) {
+  request.get(url)
+    .on('error', (err) => {
+      throw err;
+    })
+    .pipe(fs.createWriteStream(filePath));
+}
+
+// test
+downloadImageByURL("https://avatars2.githubusercontent.com/u/2741?v=3&s=466", "avatars/kvirani.jpg");
 
 const repoOwner = 'jquery';
 const repoName = 'jquery';

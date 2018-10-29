@@ -24,20 +24,16 @@ function downloadImageByURL(url, filePath) {
     .on('error', (err) => {
       throw err;
     })
-    .pipe(fs.createWriteStream(filePath));
+    .pipe(fs.createWriteStream(`avatars/${filePath}.jpg`));
 }
-
-// test
-downloadImageByURL("https://avatars2.githubusercontent.com/u/2741?v=3&s=466", "avatars/kvirani.jpg");
 
 const repoOwner = 'jquery';
 const repoName = 'jquery';
 
 getRepoContributors(repoOwner, repoName, (err, result) => {
   log("Errors:", err);
-  var filtered = result.map((contributor) => contributor.avatar_url);
   log("Result:");
-  filtered.forEach((avatarUrl) => {
-    log(avatarUrl);
+  result.forEach((contributor) => {
+    downloadImageByURL(contributor.avatar_url, contributor.login);
   });
 });

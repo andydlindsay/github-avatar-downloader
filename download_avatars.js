@@ -9,8 +9,10 @@ function getRepoContributors(repoOwner, repoName, cb) {
   const options = {
     url: `https://api.github.com/repos/${repoOwner}/${repoName}/contributors`,
     headers: {
-      'User-Agent': 'request',
-      'Authorization': secrets.GITHUB_TOKEN
+      'User-Agent': 'request'
+    },
+    qs: {
+      access_token: secrets.GITHUB_TOKEN
     }
   };
   request(options, (err, res, body) => {
@@ -23,9 +25,10 @@ function downloadImageByURL(url, filePath) {
     .on('error', (err) => {
       throw err;
     })
-    .pipe(fs.createWriteStream(`avatars/${filePath}.jpg`));
+    .pipe(fs.createWriteStream(`${filePath}.jpg`));
 }
 
+// get repoOwner and repoName from command line arguments
 const repoOwner = process.argv[2];
 const repoName = process.argv[3];
 
@@ -33,16 +36,17 @@ if (repoOwner && repoName) {
   log('Welcome to the GitHub Avatar Downloader!');
   getRepoContributors(repoOwner, repoName, (err, result) => {
     log("Errors:", err);
-    var mkdirp = require('mkdirp');
-    mkdirp('avatars', function(err) {
+    // create the avatars directory if it does not already exist
+    mkdirp('./avatars', (err) => {
       if (err) {
         console.error(err);
         return;
+      } else {
+        result.forEach((contributor) => {
+          downloadImageByURL(contributor.avatar_url, `avatars/${contributor.login}`);
+        });
+        log('Result: Download Complete');
       }
-      result.forEach((contributor) => {
-        downloadImageByURL(contributor.avatar_url, contributor.login);
-      });
-      log('Result: Download Complete');
     });
   });
 } else {

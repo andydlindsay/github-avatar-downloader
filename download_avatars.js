@@ -1,6 +1,7 @@
 const request = require('request');
 const https = require('https');
 const fs = require('fs');
+const mkdirp = require('mkdirp');
 const secrets = require('./secrets');
 const log = console.log;
 
@@ -32,8 +33,15 @@ const repoName = process.argv[3];
 
 getRepoContributors(repoOwner, repoName, (err, result) => {
   log("Errors:", err);
-  result.forEach((contributor) => {
-    downloadImageByURL(contributor.avatar_url, contributor.login);
+  var mkdirp = require('mkdirp');
+  mkdirp('avatars', function(err) {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    result.forEach((contributor) => {
+      downloadImageByURL(contributor.avatar_url, contributor.login);
+    });
+    log('Result: Download Complete');
   });
-  log('Result: Download Complete');
 });

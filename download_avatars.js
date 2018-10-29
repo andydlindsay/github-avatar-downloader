@@ -14,7 +14,7 @@ function getRepoContributors(repoOwner, repoName, cb) {
     }
   };
   request(options, (err, res, body) => {
-    cb(err, body);
+    cb(err, JSON.parse(body));
   });
 }
 
@@ -23,5 +23,9 @@ const repoName = 'jquery';
 
 getRepoContributors(repoOwner, repoName, (err, result) => {
   log("Errors:", err);
-  log("Result:", result);
+  var filtered = result.map((contributor) => contributor.avatar_url);
+  log("Result:");
+  filtered.forEach((avatarUrl) => {
+    log(avatarUrl);
+  });
 });

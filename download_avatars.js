@@ -27,13 +27,13 @@ function downloadImageByURL(url, filePath) {
     .pipe(fs.createWriteStream(`avatars/${filePath}.jpg`));
 }
 
-const repoOwner = 'jquery';
-const repoName = 'jquery';
+const repoOwner = process.argv[2];
+const repoName = process.argv[3];
 
 getRepoContributors(repoOwner, repoName, (err, result) => {
   log("Errors:", err);
-  log("Result:");
   result.forEach((contributor) => {
     downloadImageByURL(contributor.avatar_url, contributor.login);
   });
+  log('Result: Download Complete');
 });

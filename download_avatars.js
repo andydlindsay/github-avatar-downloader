@@ -1,29 +1,9 @@
-require('dotenv').config();
-
 const request = require('request');
-const https = require('https');
 const fs = require('fs');
 const mkdirp = require('mkdirp');
 const log = console.log;
 
-function getRepoContributors(repoOwner, repoName, cb) {
-  const options = {
-    url: `https://api.github.com/repos/${repoOwner}/${repoName}/contributors`,
-    headers: {
-      'User-Agent': 'request'
-    },
-    qs: {
-      access_token: process.env.GITHUB_TOKEN
-    }
-  };
-  request(options, (err, res, body) => {
-    if (JSON.parse(res.body).message) {
-      log('Bad Github credentials');
-      return;
-    }
-    cb(err, JSON.parse(body));
-  });
-}
+const getRepoContributors = require('./get_repo_contributors');
 
 function downloadImageByURL(url, filePath) {
   request.get(url)
